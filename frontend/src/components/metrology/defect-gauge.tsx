@@ -18,58 +18,53 @@ export function DefectGauge({ probability }: DefectGaugeProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Defect Probability</CardTitle>
+      <CardHeader className="py-3 px-4">
+        <CardTitle className="text-sm">Defect Probability</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col items-center">
-        <div className="relative" style={{ width: 200, height: 120 }}>
+      <CardContent className="flex flex-col items-center p-4 pt-0">
+        <div className="relative" style={{ width: 160, height: 100 }}>
           <svg
-            width="200"
-            height="120"
-            viewBox="0 0 200 120"
-            className="transform -rotate-180"
+            width="160"
+            height="100"
+            viewBox="0 0 160 100"
             style={{ transform: 'rotate(180deg)' }}
           >
-            {/* Background arc */}
             <path
-              d={`M ${20} ${100} A ${radius} ${radius} 0 0 1 ${180} ${100}`}
+              d={`M ${16} ${80} A ${64} ${64} 0 0 1 ${144} ${80}`}
               fill="none"
               stroke="hsl(var(--muted))"
-              strokeWidth={strokeWidth}
+              strokeWidth={10}
               strokeLinecap="round"
             />
-            {/* Progress arc */}
             <path
-              d={`M ${20} ${100} A ${radius} ${radius} 0 0 1 ${180} ${100}`}
+              d={`M ${16} ${80} A ${64} ${64} 0 0 1 ${144} ${80}`}
               fill="none"
               stroke={color}
-              strokeWidth={strokeWidth}
+              strokeWidth={10}
               strokeLinecap="round"
-              strokeDasharray={`${progress} ${circumference}`}
+              strokeDasharray={`${(percentage / 100) * (Math.PI * 64)} ${Math.PI * 64}`}
               className="transition-all duration-500"
             />
           </svg>
-          {/* Center text */}
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-2">
-            <span className="text-4xl font-bold" style={{ color }}>
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-1">
+            <span className="text-3xl font-bold" style={{ color }}>
               {percentage.toFixed(1)}%
             </span>
-            <span className="text-sm text-muted-foreground">probability</span>
+            <span className="text-xs text-muted-foreground">probability</span>
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="mt-4 flex justify-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-green-500" />
+        <div className="mt-2 flex justify-center gap-4 text-xs">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-green-500" />
             <span className="text-muted-foreground">&lt;10% Safe</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-yellow-500" />
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-yellow-500" />
             <span className="text-muted-foreground">10-25% Caution</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-red-500" />
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-red-500" />
             <span className="text-muted-foreground">&gt;25% High Risk</span>
           </div>
         </div>

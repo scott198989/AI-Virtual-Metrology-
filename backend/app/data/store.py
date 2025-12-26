@@ -113,29 +113,38 @@ class DataStore:
     def get_metrics(self) -> dict:
         """Get model performance metrics."""
         if not self._training_result:
-            return {}
+            return {
+                "thickness": {"metrics": {}, "featureImportance": {}},
+                "porosity": {"metrics": {}, "featureImportance": {}},
+                "defect": {"metrics": {}, "featureImportance": {}},
+                "quality": {"metrics": {}},
+            }
+
+        def to_float_dict(d: dict) -> dict:
+            """Convert numpy types to Python floats."""
+            return {k: float(v) for k, v in d.items()}
+
+        def get_top_features(importance: dict, n: int = 10) -> dict:
+            """Get top N features by importance as Python floats."""
+            sorted_items = sorted(importance.items(), key=lambda x: x[1], reverse=True)[:n]
+            return {k: float(v) for k, v in sorted_items}
 
         return {
             "thickness": {
-                "metrics": self._training_result.thickness_metrics.metrics,
-                "featureImportance": dict(
-                    list(self._training_result.thickness_metrics.feature_importance.items())[:10]
-                ),
+                "metrics": to_float_dict(self._training_result.thickness_metrics.metrics),
+                "featureImportance": get_top_features(self._training_result.thickness_metrics.feature_importance),
             },
             "porosity": {
-                "metrics": self._training_result.porosity_metrics.metrics,
-                "featureImportance": dict(
-                    list(self._training_result.porosity_metrics.feature_importance.items())[:10]
-                ),
+                "metrics": to_float_dict(self._training_result.porosity_metrics.metrics),
+                "featureImportance": get_top_features(self._training_result.porosity_metrics.feature_importance),
             },
             "defect": {
-                "metrics": self._training_result.defect_metrics.metrics,
-                "featureImportance": dict(
-                    list(self._training_result.defect_metrics.feature_importance.items())[:10]
-                ),
+                "metrics": to_float_dict(self._training_result.defect_metrics.metrics),
+                "featureImportance": get_top_features(self._training_result.defect_metrics.feature_importance),
             },
             "quality": {
-                "metrics": self._training_result.quality_metrics.metrics,
+                "metrics": to_float_dict(self._training_result.quality_metrics.metrics),
+                "featureImportance": get_top_features(self._training_result.quality_metrics.feature_importance),
             },
         }
 
