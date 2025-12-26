@@ -56,7 +56,7 @@ export default function DashboardPage() {
           <QualityGauge summary={summary} />
 
           {/* Model Performance */}
-          {metrics && (
+          {metrics && metrics.thickness?.metrics?.r2 != null && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -68,19 +68,19 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Thickness RMSE</span>
                   <span className="font-medium">
-                    {metrics.thickness.metrics.rmse?.toFixed(2)} µm
+                    {(metrics.thickness.metrics.rmse ?? 0).toFixed(2)} µm
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Thickness R²</span>
                   <span className="font-medium">
-                    {(metrics.thickness.metrics.r2 * 100).toFixed(1)}%
+                    {((metrics.thickness.metrics.r2 ?? 0) * 100).toFixed(1)}%
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Defect ROC-AUC</span>
                   <span className="font-medium">
-                    {(metrics.defect.metrics.roc_auc * 100).toFixed(1)}%
+                    {((metrics.defect?.metrics?.roc_auc ?? 0) * 100).toFixed(1)}%
                   </span>
                 </div>
               </CardContent>
@@ -99,7 +99,7 @@ export default function DashboardPage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">PSI Score</span>
-                  <span className="font-medium">{drift.psi.toFixed(4)}</span>
+                  <span className="font-medium">{(drift.psi ?? 0).toFixed(4)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Drifted Features</span>

@@ -87,7 +87,7 @@ export default function DriftPage() {
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className={`text-2xl font-bold ${status.color}`}>{status.label}</span>
-                <Badge variant="outline">PSI: {drift.psi.toFixed(4)}</Badge>
+                <Badge variant="outline">PSI: {(drift.psi ?? 0).toFixed(4)}</Badge>
               </div>
               <p className="text-muted-foreground">{status.description}</p>
             </div>
@@ -169,20 +169,21 @@ export default function DriftPage() {
               <div className="space-y-4">
                 {drift.driftedFeatures.slice(0, 10).map((feature) => {
                   const fd = drift.featureDrift[feature];
+                  if (!fd) return null;
                   return (
                     <div key={feature} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <div className="font-medium font-mono text-sm">{feature}</div>
                         <div className="text-xs text-muted-foreground">
-                          Reference: {fd.referenceMean.toFixed(2)} → Current: {fd.currentMean.toFixed(2)}
+                          Reference: {(fd.referenceMean ?? 0).toFixed(2)} → Current: {(fd.currentMean ?? 0).toFixed(2)}
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-red-500">
-                          {(fd.shiftMagnitude * 100).toFixed(1)}%
+                          {((fd.shiftMagnitude ?? 0) * 100).toFixed(1)}%
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          p = {fd.pValue.toFixed(4)}
+                          p = {(fd.pValue ?? 0).toFixed(4)}
                         </div>
                       </div>
                     </div>
@@ -194,7 +195,7 @@ export default function DriftPage() {
         )}
 
         {/* Model Performance */}
-        {metrics && (
+        {metrics && metrics.thickness?.metrics?.r2 != null && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -206,23 +207,23 @@ export default function DriftPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Thickness RMSE</span>
-                  <span className="font-medium">{metrics.thickness.metrics.rmse?.toFixed(3)} µm</span>
+                  <span className="font-medium">{(metrics.thickness.metrics.rmse ?? 0).toFixed(3)} µm</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Thickness R²</span>
-                  <span className="font-medium">{(metrics.thickness.metrics.r2 * 100).toFixed(1)}%</span>
+                  <span className="font-medium">{((metrics.thickness.metrics.r2 ?? 0) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Thickness MAE</span>
-                  <span className="font-medium">{metrics.thickness.metrics.mae?.toFixed(3)} µm</span>
+                  <span className="font-medium">{(metrics.thickness.metrics.mae ?? 0).toFixed(3)} µm</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Defect Accuracy</span>
-                  <span className="font-medium">{(metrics.defect.metrics.accuracy * 100).toFixed(1)}%</span>
+                  <span className="font-medium">{((metrics.defect?.metrics?.accuracy ?? 0) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Defect ROC-AUC</span>
-                  <span className="font-medium">{(metrics.defect.metrics.roc_auc * 100).toFixed(1)}%</span>
+                  <span className="font-medium">{((metrics.defect?.metrics?.roc_auc ?? 0) * 100).toFixed(1)}%</span>
                 </div>
               </div>
             </CardContent>

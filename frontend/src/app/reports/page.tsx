@@ -111,15 +111,15 @@ export default function ReportsPage() {
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Avg Thickness</span>
-                    <span>{summary.averageThickness.toFixed(1)} µm</span>
+                    <span>{(summary.averageThickness ?? 0).toFixed(1)} µm</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Avg Porosity</span>
-                    <span>{summary.averagePorosity.toFixed(2)}%</span>
+                    <span>{(summary.averagePorosity ?? 0).toFixed(2)}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Defect Rate</span>
-                    <span>{summary.defectRate.toFixed(1)}%</span>
+                    <span>{(summary.defectRate ?? 0).toFixed(1)}%</span>
                   </div>
                 </div>
               </div>
@@ -127,26 +127,26 @@ export default function ReportsPage() {
               <div className="space-y-2">
                 <h4 className="font-semibold">Grade Distribution</h4>
                 <div className="space-y-1 text-sm">
-                  {Object.entries(summary.gradeDistribution).map(([grade, count]) => (
+                  {Object.entries(summary.gradeDistribution || {}).map(([grade, count]) => (
                     <div key={grade} className="flex justify-between">
                       <span className="text-muted-foreground">Grade {grade}</span>
-                      <span>{count} ({((count / summary.totalRuns) * 100).toFixed(0)}%)</span>
+                      <span>{count} ({summary.totalRuns > 0 ? ((Number(count) / summary.totalRuns) * 100).toFixed(0) : 0}%)</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {metrics && (
+              {metrics && metrics.thickness?.metrics?.r2 != null && (
                 <div className="space-y-2">
                   <h4 className="font-semibold">Model Performance</h4>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Thickness R²</span>
-                      <span>{(metrics.thickness.metrics.r2 * 100).toFixed(1)}%</span>
+                      <span>{((metrics.thickness.metrics.r2 ?? 0) * 100).toFixed(1)}%</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Defect AUC</span>
-                      <span>{(metrics.defect.metrics.roc_auc * 100).toFixed(1)}%</span>
+                      <span>{((metrics.defect?.metrics?.roc_auc ?? 0) * 100).toFixed(1)}%</span>
                     </div>
                   </div>
                 </div>

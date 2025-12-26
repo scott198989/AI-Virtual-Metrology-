@@ -213,9 +213,6 @@ class ThermalCoatingSimulator:
 
     def get_summary_statistics(self) -> dict:
         """Get summary statistics across all runs."""
-        if not self.runs:
-            return {}
-
         runs = list(self.runs.values())
         qualities = [r.quality_metrics for r in runs if r.quality_metrics]
 
@@ -223,19 +220,23 @@ class ThermalCoatingSimulator:
         for q in qualities:
             grades[q.quality_grade] = grades.get(q.quality_grade, 0) + 1
 
+        # Handle empty data gracefully
+        if not qualities:
+            avg_thickness = 0.0
+            avg_porosity = 0.0
+            defect_rate = 0.0
+        else:
+            avg_thickness = float(np.mean([q.thickness_um for q in qualities]))
+            avg_porosity = float(np.mean([q.porosity_pct for q in qualities]))
+            defect_rate = sum(1 for q in qualities if q.defect_flag) / len(qualities) * 100
+
         return {
             "totalRuns": len(runs),
             "completedRuns": sum(1 for r in runs if r.status == "completed"),
             "failedRuns": sum(1 for r in runs if r.status == "failed"),
             "oodRuns": sum(1 for r in runs if r.is_ood),
-            "averageThickness": round(
-                np.mean([q.thickness_um for q in qualities]), 2
-            ),
-            "averagePorosity": round(
-                np.mean([q.porosity_pct for q in qualities]), 2
-            ),
-            "defectRate": round(
-                sum(1 for q in qualities if q.defect_flag) / len(qualities) * 100, 1
-            ),
+            "averageThickness": round(avg_thickness, 2),
+            "averagePorosity": round(avg_porosity, 2),
+            "defectRate": round(defect_rate, 1),
             "gradeDistribution": grades,
         }
